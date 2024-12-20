@@ -1,0 +1,238 @@
+openapi: 3.0.1
+info:
+  title: EDUCATIONAL-PROGRAMS-MS
+  description: API para gestionar programas académicos.
+  version: 1.0.0
+servers:
+- url: http://localhost:8081
+  description: Servidor local
+paths:
+  /programs:
+    get:
+      summary: Obtener todos los programas académicos
+      operationId: programs_get
+      responses:
+        "200":
+          description: Lista de programas académicos
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Program'
+                x-content-type: application/json
+      x-openapi-router-controller: swagger_server.controllers.programs_controller
+    post:
+      summary: Crear un nuevo programa académico
+      operationId: programs_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProgramRequest'
+        required: true
+      responses:
+        "201":
+          description: Programa académico creado exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Program'
+        "400":
+          description: Error en los datos proporcionados
+      x-openapi-router-controller: swagger_server.controllers.programs_controller
+  /programs/{id}:
+    get:
+      summary: Obtener un programa académico por ID
+      operationId: programs_id_get
+      parameters:
+      - name: id
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      responses:
+        "200":
+          description: Detalles del programa académico
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Program'
+        "404":
+          description: Programa académico no encontrado
+      x-openapi-router-controller: swagger_server.controllers.programs_controller
+    delete:
+      summary: Eliminar un programa académico
+      operationId: programs_id_delete
+      parameters:
+      - name: id
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      responses:
+        "204":
+          description: Programa académico eliminado exitosamente
+        "404":
+          description: Programa académico no encontrado
+      x-openapi-router-controller: swagger_server.controllers.programs_controller
+    patch:
+      summary: Actualizar parcialmente un programa académico
+      operationId: programs_id_patch
+      parameters:
+      - name: id
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProgramUpdate'
+        required: true
+      responses:
+        "200":
+          description: Programa académico actualizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Program'
+        "400":
+          description: Datos inválidos
+        "404":
+          description: Programa académico no encontrado
+      x-openapi-router-controller: swagger_server.controllers.programs_controller
+  /vendors/{vendorId}/programs:
+    get:
+      summary: Obtener programas asignados a un vendedor
+      operationId: vendors_programs_get
+      parameters:
+      - name: vendorId
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      responses:
+        "200":
+          description: Lista de programas asignados a un vendedor
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Program'
+                x-content-type: application/json
+        "404":
+          description: Vendedor no encontrado o sin programas asignados
+      x-openapi-router-controller: swagger_server.controllers.programs_controller
+    post:
+      summary: Asignar un programa a un vendedor
+      operationId: vendors_programs_post
+      parameters:
+      - name: vendorId
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AssignProgramRequest'
+        required: true
+      responses:
+        "201":
+          description: Programa asignado exitosamente
+        "400":
+          description: Error en los datos proporcionados
+        "404":
+          description: Vendedor o programa no encontrado
+      x-openapi-router-controller: swagger_server.controllers.programs_controller
+  /vendors/{vendorId}/programs/{programId}:
+    delete:
+      summary: Quitar un programa de un vendedor
+      operationId: vendors_programs_delete
+      parameters:
+      - name: vendorId
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      - name: programId
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      responses:
+        "204":
+          description: Programa quitado exitosamente
+        "404":
+          description: Vendedor o programa no encontrado
+      x-openapi-router-controller: swagger_server.controllers.programs_controller
+components:
+  schemas:
+    Program:
+      type: object
+      properties:
+        id:
+          type: integer
+        nombre:
+          type: string
+        descripcion:
+          type: string
+        estado:
+          type: integer
+      example:
+        id: 1
+        nombre: MBA
+        descripcion: Maestría en Administración de Negocios
+        estado: 1
+    ProgramRequest:
+      type: object
+      properties:
+        nombre:
+          type: string
+        descripcion:
+          type: string
+        estado:
+          type: integer
+      example:
+        nombre: Data Science
+        descripcion: Especialización en Ciencia de Datos
+        estado: 1
+    ProgramUpdate:
+      type: object
+      properties:
+        nombre:
+          type: string
+        descripcion:
+          type: string
+        estado:
+          type: integer
+      example:
+        nombre: Marketing Digital
+        descripcion: Actualización en estrategias digitales
+        estado: 1
+    AssignProgramRequest:
+      type: object
+      properties:
+        programId:
+          type: integer
+      example:
+        programId: 1
+
