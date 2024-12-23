@@ -4,7 +4,7 @@ from flask import request, jsonify
 
 from swagger_server.models.assign_program_request import AssignProgramRequest  # noqa: E501
 from swagger_server.models.program import Program  # noqa: E501
-from swagger_server.models.program_request import ProgramRequest  # noqa: E501
+from swagger_server.models.custom_program_request import CustomProgramRequest
 from swagger_server.models.program_update import ProgramUpdate  # noqa: E501
 from swagger_server import util
 from swagger_server.repositories.program_repository import ProgramRepository  # Importar el repositorio
@@ -65,20 +65,19 @@ def programs_id_patch(body, id):  # noqa: E501
     return 'do some magic!'
 
 
-def programs_post(body):  # noqa: E501
+def programs_post():  # noqa: E501
     """Crear un nuevo programa académico
-
-     # noqa: E501
-
-    :param body: 
-    :type body: dict | bytes
 
     :rtype: Program
     """
     if request.is_json:
-        body = ProgramRequest.from_dict(request.get_json())  # noqa: E501
-    return 'do some magic!'
-
+        body = CustomProgramRequest.from_dict(request.get_json())  # noqa: E501
+        try:
+            new_program = program_repository.create_program(body)
+            return jsonify(new_program), 201
+        except Exception as e:
+            return jsonify({"message": str(e)}), 500
+    return jsonify({"message": "Invalid input"}), 400
 
 def vendors_programs_delete(vendor_id, program_id):  # noqa: E501
     """Quitar un programa de un vendedor
