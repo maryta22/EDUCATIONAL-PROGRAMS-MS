@@ -28,22 +28,30 @@ class ProgramRepository:
         finally:
             session.close()
 
-    def create_program(self, program_request: CustomProgramRequest):
+    def create_program(self, name, description, state, advisors):
         session = self.Session()
         try:
             # Crear el nuevo programa
             new_program = Program(
-                name=program_request.nombre,
-                description=program_request.descripcion,
-                state=1 if program_request.estado == 'Activo' else 0
+                name=name,
+                description=description,
+                state=state
             )
             session.add(new_program)
-            session.flush()  # Para obtener el ID del nuevo programa
-
-            # Añadir registros en ProgramSellers si hay asesores
-            if program_request.advisors:
-                self.update_program_sellers(session, new_program.id, program_request.advisors)
-
+            session.flush()  # Obtiene el ID del nuevo programa
+    
+            # Insertar los asesores asociados al programa
+            if advisors:
+                program_sellers = [
+                    ProgramSellers(
+                        id_academic_program=new_program.id,
+                        id_sales_advisor=advisor_id,
+                        state=1  # Estado activo por defecto
+                    )
+                    for advisor_id in advisors
+                ]
+                session.bulk_save_objects(program_sellers)
+    
             session.commit()
             return new_program.to_dict()
         except Exception as e:
@@ -52,16 +60,4 @@ class ProgramRepository:
             raise
         finally:
             session.close()
-
-    def update_program_sellers(self, session, program_id, advisors):
-        try:
-            for advisor_id in advisors:
-                new_program_seller = ProgramSellers(
-                    id_academic_program=program_id,
-                    id_sales_advisor=advisor_id,
-                    state=1  # Asumimos que el estado es activo por defecto
-                )
-                session.add(new_program_seller)
-        except Exception as e:
-            logging.error(f"Error updating program sellers: {e}")
-            raise
+    

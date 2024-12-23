@@ -65,19 +65,23 @@ def programs_id_patch(body, id):  # noqa: E501
     return 'do some magic!'
 
 
-def programs_post():  # noqa: E501
-    """Crear un nuevo programa académico
+def programs_post():
+    try:
+        # Obtener el cuerpo de la solicitud
+        data = request.get_json()
 
-    :rtype: Program
-    """
-    if request.is_json:
-        body = CustomProgramRequest.from_dict(request.get_json())  # noqa: E501
-        try:
-            new_program = program_repository.create_program(body)
-            return jsonify(new_program), 201
-        except Exception as e:
-            return jsonify({"message": str(e)}), 500
-    return jsonify({"message": "Invalid input"}), 400
+        # Procesar datos del programa
+        name = data.get('nombre')
+        description = data.get('descripcion')
+        state = 1 if data.get('estado') == 'Activo' else 0
+        advisors = data.get('advisors', [])  # Extraer el array de asesores
+
+        # Llamar al repositorio para crear el programa
+        new_program = program_repository.create_program(name, description, state, advisors)
+        return new_program, 201
+    except Exception as e:
+        logging.error(f"Error creating program: {e}")
+        return {"message": "Error creating program"}, 500
 
 def vendors_programs_delete(vendor_id, program_id):  # noqa: E501
     """Quitar un programa de un vendedor
