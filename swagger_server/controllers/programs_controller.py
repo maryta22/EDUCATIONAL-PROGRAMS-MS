@@ -1,13 +1,15 @@
 import connexion
 import six
-from flask import request
+from flask import request, jsonify
 
 from swagger_server.models.assign_program_request import AssignProgramRequest  # noqa: E501
 from swagger_server.models.program import Program  # noqa: E501
 from swagger_server.models.program_request import ProgramRequest  # noqa: E501
 from swagger_server.models.program_update import ProgramUpdate  # noqa: E501
 from swagger_server import util
+from swagger_server.repositories.program_repository import ProgramRepository  # Importar el repositorio
 
+program_repository = ProgramRepository()
 
 def programs_get():  # noqa: E501
     """Obtener todos los programas académicos
@@ -17,7 +19,7 @@ def programs_get():  # noqa: E501
 
     :rtype: List[Program]
     """
-    return 'do some magic!'
+    return program_repository.get_all_programs()
 
 
 def programs_id_delete(id):  # noqa: E501
