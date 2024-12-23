@@ -14,12 +14,13 @@ program_repository = ProgramRepository()
 def programs_get():  # noqa: E501
     """Obtener todos los programas académicos
 
-     # noqa: E501
-
-
     :rtype: List[Program]
     """
-    return program_repository.get_all_programs()
+    try:
+        programs = program_repository.get_all_programs()
+        return jsonify(programs), 200
+    except Exception as e:
+        return jsonify({"message": str(e)}), 500
 
 
 def programs_id_delete(id):  # noqa: E501

@@ -19,7 +19,7 @@ class ProgramRepository:
         session = self.Session()
         try:
             programs = session.query(Program).options(
-                joinedload(Program.program_sellers).joinedload(ProgramSellers.sales_advisor)
+                joinedload(Program.program_sellers).joinedload(ProgramSellers.sales_advisor).joinedload(SalesAdvisor.user)
             ).all()
             return [program.to_dict() for program in programs]
         except Exception as e:
@@ -39,7 +39,7 @@ class ProgramRepository:
             )
             session.add(new_program)
             session.flush()  # Obtiene el ID del nuevo programa
-    
+
             # Insertar los asesores asociados al programa
             if advisors:
                 program_sellers = [
@@ -51,7 +51,7 @@ class ProgramRepository:
                     for advisor_id in advisors
                 ]
                 session.bulk_save_objects(program_sellers)
-    
+
             session.commit()
             return new_program.to_dict()
         except Exception as e:
@@ -60,4 +60,3 @@ class ProgramRepository:
             raise
         finally:
             session.close()
-    
