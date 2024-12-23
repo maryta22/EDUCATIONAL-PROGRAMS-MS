@@ -1,4 +1,4 @@
-from swagger_server.database_models.models import Program
+from swagger_server.database_models.models import Program, ProgramSellers, SalesAdvisor
 
 import logging
 from datetime import datetime
@@ -18,7 +18,9 @@ class ProgramRepository:
     def get_all_programs(self):
         session = self.Session()
         try:
-            programs = session.query(Program).all()
+            programs = session.query(Program).options(
+                joinedload(Program.program_sellers).joinedload(ProgramSellers.sales_advisor)
+            ).all()
             return [program.to_dict() for program in programs]
         except Exception as e:
             logging.error(f"Error retrieving programs: {e}")
