@@ -49,21 +49,30 @@ def programs_id_get(id):  # noqa: E501
     return 'do some magic!'
 
 
-def programs_id_patch(body, id):  # noqa: E501
+def programs_id_patch(id):  # noqa: E501
     """Actualizar parcialmente un programa académico
 
-     # noqa: E501
-
-    :param body: 
-    :type body: dict | bytes
     :param id: 
     :type id: int
 
     :rtype: Program
     """
-    if request.is_json:
-        body = ProgramUpdate.from_dict(request.get_json())  # noqa: E501
-    return 'do some magic!'
+    try:
+        # Obtener el cuerpo de la solicitud
+        data = request.get_json()
+
+        # Procesar datos del programa
+        name = data.get('nombre')
+        description = data.get('descripcion')
+        state = data.get('estado')
+        advisors = data.get('advisors', [])  # Extraer el array de asesores
+
+        # Llamar al repositorio para actualizar el programa
+        updated_program = program_repository.update_program(id, name, description, state, advisors)
+        return jsonify(updated_program), 200
+    except Exception as e:
+        logging.error(f"Error updating program: {e}")
+        return jsonify({"message": "Error updating program"}), 500
 
 
 def programs_post():

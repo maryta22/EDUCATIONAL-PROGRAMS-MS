@@ -1,8 +1,5 @@
 from swagger_server.database_models.models import Program, ProgramSellers, SalesAdvisor
-from swagger_server.models.custom_program_request import CustomProgramRequest
 import logging
-from datetime import datetime
-
 from sqlalchemy.orm import sessionmaker, joinedload
 from sqlalchemy import create_engine
 from dotenv import load_dotenv
@@ -57,6 +54,44 @@ class ProgramRepository:
         except Exception as e:
             session.rollback()
             logging.error(f"Error creating program: {e}")
+            raise
+        finally:
+            session.close()
+
+    def update_program(self, program_id, name, description, state, advisors):
+        session = self.Session()
+        try:
+            program = session.query(Program).filter(Program.id == program_id).one_or_none()
+            if not program:
+                raise Exception("Program not found")
+
+            if name:
+                program.name = name
+            if description:
+                program.description = description
+            if state is not None:
+                program.state = state
+
+            # Actualizar los asesores asociados al programa
+            if advisors is not None:
+                # Eliminar los asesores actuales
+                session.query(ProgramSellers).filter(ProgramSellers.id_academic_program == program_id).delete()
+                # Insertar los nuevos asesores
+                program_sellers = [
+                    ProgramSellers(
+                        id_academic_program=program_id,
+                        id_sales_advisor=advisor_id,
+                        state=1  # Estado activo por defecto
+                    )
+                    for advisor_id in advisors
+                ]
+                session.bulk_save_objects(program_sellers)
+
+            session.commit()
+            return program.to_dict()
+        except Exception as e:
+            session.rollback()
+            logging.error(f"Error updating program: {e}")
             raise
         finally:
             session.close()

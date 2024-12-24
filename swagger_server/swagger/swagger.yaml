@@ -62,6 +62,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Program'
+        "400":
+          description: Datos inválidos
         "404":
           description: Programa académico no encontrado
       x-openapi-router-controller: swagger_server.controllers.programs_controller
