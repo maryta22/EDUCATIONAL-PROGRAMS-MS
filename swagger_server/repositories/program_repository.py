@@ -12,12 +12,18 @@ class ProgramRepository:
         self.engine = create_engine(f'mysql+pymysql://root:{pass_sam}@localhost:3306/espae_prospections')
         self.Session = sessionmaker(bind=self.engine)
 
-    def get_all_programs(self):
+    def get_all_programs(self, state=None):
         session = self.Session()
         try:
-            programs = session.query(Program).options(
+            query = session.query(Program).options(
                 joinedload(Program.program_sellers).joinedload(ProgramSellers.sales_advisor).joinedload(SalesAdvisor.user)
-            ).all()
+            )
+
+            # Aplica el filtro de estado si se proporciona
+            if state is not None:
+                query = query.filter(Program.state == state)
+
+            programs = query.all()
             return [program.to_dict() for program in programs]
         except Exception as e:
             logging.error(f"Error retrieving programs: {e}")

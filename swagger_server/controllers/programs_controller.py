@@ -18,10 +18,15 @@ def programs_get():  # noqa: E501
     :rtype: List[Program]
     """
     try:
-        programs = program_repository.get_all_programs()
+        # Lee el parámetro 'state' de la consulta (query parameter)
+        state = request.args.get('state', type=int)
+
+        # Llama al repositorio con el filtro de estado
+        programs = program_repository.get_all_programs(state=state)
         return jsonify(programs), 200
     except Exception as e:
         return jsonify({"message": str(e)}), 500
+
 
 
 def programs_id_delete(id_):  # noqa: E501
