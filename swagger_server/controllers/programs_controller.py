@@ -1,3 +1,4 @@
+import logging
 import connexion
 import six
 from flask import request, jsonify
@@ -23,7 +24,7 @@ def programs_get():  # noqa: E501
         return jsonify({"message": str(e)}), 500
 
 
-def programs_id_delete(id):  # noqa: E501
+def programs_id_delete(id_):  # noqa: E501
     """Eliminar un programa académico
 
      # noqa: E501
@@ -36,20 +37,19 @@ def programs_id_delete(id):  # noqa: E501
     return 'do some magic!'
 
 
-def programs_id_get(id):  # noqa: E501
-    """Obtener un programa académico por ID
-
-     # noqa: E501
-
-    :param id: 
-    :type id: int
+def programs_id_get(id_):  # noqa: E501
+    """Obtener programa por id
 
     :rtype: Program
     """
-    return 'do some magic!'
+    try:
+        program = program_repository.get_program_by_id(id_)
+        return jsonify(program), 200
+    except Exception as e:
+        return jsonify({"message": str(e)}), 500
 
 
-def programs_id_patch(id):  # noqa: E501
+def programs_id_patch(id_):  # noqa: E501
     """Actualizar parcialmente un programa académico
 
     :param id: 
@@ -68,7 +68,7 @@ def programs_id_patch(id):  # noqa: E501
         advisors = data.get('advisors', [])  # Extraer el array de asesores
 
         # Llamar al repositorio para actualizar el programa
-        updated_program = program_repository.update_program(id, name, description, state, advisors)
+        updated_program = program_repository.update_program(id_, name, description, state, advisors)
         return jsonify(updated_program), 200
     except Exception as e:
         logging.error(f"Error updating program: {e}")

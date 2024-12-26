@@ -61,6 +61,7 @@ class ProgramRepository:
     def update_program(self, program_id, name, description, state, advisors):
         session = self.Session()
         try:
+            print("program_id:", program_id)
             program = session.query(Program).filter(Program.id == program_id).one_or_none()
             if not program:
                 raise Exception("Program not found")
@@ -92,6 +93,21 @@ class ProgramRepository:
         except Exception as e:
             session.rollback()
             logging.error(f"Error updating program: {e}")
+            raise
+        finally:
+            session.close()
+
+    def get_program_by_id(self, id):
+        session = self.Session()
+        try:
+            program = session.query(Program).options(
+                joinedload(Program.program_sellers).joinedload(ProgramSellers.sales_advisor).joinedload(SalesAdvisor.user)
+            ).filter(Program.id == id).one_or_none()
+            if not program:
+                raise Exception("Program not found")
+            return program.to_dict()
+        except Exception as e:
+            logging.error(f"Error retrieving program: {e}")
             raise
         finally:
             session.close()
