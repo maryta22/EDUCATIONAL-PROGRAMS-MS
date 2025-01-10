@@ -24,6 +24,7 @@ class ProgramRepository:
                 query = query.filter(Program.state == state)
 
             programs = query.all()
+            print([program.to_dict() for program in programs])
             return [program.to_dict() for program in programs]
         except Exception as e:
             logging.error(f"Error retrieving programs: {e}")
