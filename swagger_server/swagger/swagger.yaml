@@ -188,6 +188,31 @@ paths:
         "404":
           description: Vendedor o programa no encontrado
       x-openapi-router-controller: swagger_server.controllers.programs_controller
+  /sales-advisors/{advisor_id}/programs:
+    get:
+      summary: Obtener programas asignados a un asesor de ventas
+      operationId: sales_advisors_programs_get
+      parameters:
+      - name: advisor_id
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      responses:
+        "200":
+          description: Lista de programas asignados a un asesor de ventas
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Program'
+                x-content-type: application/json
+        "404":
+          description: Asesor de ventas no encontrado o sin programas asignados
+      x-openapi-router-controller: swagger_server.controllers.programs_controller
 components:
   schemas:
     Program:

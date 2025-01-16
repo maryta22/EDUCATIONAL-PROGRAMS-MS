@@ -5,7 +5,6 @@ from flask import request, jsonify
 
 from swagger_server.models.assign_program_request import AssignProgramRequest  # noqa: E501
 from swagger_server.models.program import Program  # noqa: E501
-from swagger_server.models.custom_program_request import CustomProgramRequest
 from swagger_server.models.program_update import ProgramUpdate  # noqa: E501
 from swagger_server import util
 from swagger_server.repositories.program_repository import ProgramRepository  # Importar el repositorio
@@ -141,3 +140,20 @@ def vendors_programs_post(body, vendor_id):  # noqa: E501
     if request.is_json:
         body = AssignProgramRequest.from_dict(request.get_json())  # noqa: E501
     return 'do some magic!'
+
+def sales_advisors_programs_get(advisor_id):
+    """
+    Obtener programas asignados a un asesor de ventas
+    :param advisor_id: ID del asesor de ventas
+    :type advisor_id: int
+    :rtype: List[Program]
+    """
+    try:
+        programs = program_repository.get_programs_by_sales_advisor(advisor_id)
+        print(programs)
+        if not programs:
+            return jsonify({"message": "Asesor de ventas no encontrado o sin programas asignados"}), 404
+        return jsonify([program.to_dict() for program in programs]), 200
+    except Exception as e:
+        logging.error(f"Error retrieving programs for advisor {advisor_id}: {e}")
+        return jsonify({"message": str(e)}), 500

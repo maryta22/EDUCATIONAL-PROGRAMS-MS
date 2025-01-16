@@ -118,3 +118,20 @@ class ProgramRepository:
             raise
         finally:
             session.close()
+
+    def get_programs_by_sales_advisor(self, advisor_id):
+        session = self.Session()
+        try:
+            programs = session.query(Program).join(ProgramSellers).filter(
+                ProgramSellers.id_sales_advisor == advisor_id
+            ).options(
+                joinedload(Program.program_sellers).joinedload(ProgramSellers.sales_advisor).joinedload(
+                    SalesAdvisor.user)
+            ).all()
+
+            return programs
+        except Exception as e:
+            logging.error(f"Error retrieving programs for sales advisor {advisor_id}: {e}")
+            raise
+        finally:
+            session.close()
