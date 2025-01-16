@@ -122,8 +122,11 @@ class ProgramRepository:
     def get_programs_by_sales_advisor(self, advisor_id):
         session = self.Session()
         try:
+            # Recuperar los programas relacionados con el asesor, estado activo en ambos niveles
             programs = session.query(Program).join(ProgramSellers).filter(
-                ProgramSellers.id_sales_advisor == advisor_id
+                ProgramSellers.id_sales_advisor == advisor_id,
+                Program.state == 1,  # Estado activo del programa
+                ProgramSellers.state == 1  # Estado activo en ProgramSellers
             ).options(
                 joinedload(Program.program_sellers).joinedload(ProgramSellers.sales_advisor).joinedload(
                     SalesAdvisor.user)
@@ -135,3 +138,4 @@ class ProgramRepository:
             raise
         finally:
             session.close()
+
