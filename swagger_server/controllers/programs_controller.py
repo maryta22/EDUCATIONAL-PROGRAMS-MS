@@ -87,7 +87,7 @@ def programs_post():
         # Procesar datos del programa
         name = data.get('nombre')
         description = data.get('descripcion')
-        state = 1 if data.get('estado') == 'Activo' else 0
+        state = data.get('estado')
         advisors = data.get('advisors', [])  # Extraer el array de asesores
 
         # Llamar al repositorio para crear el programa

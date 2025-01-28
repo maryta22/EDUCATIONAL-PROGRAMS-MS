@@ -9,6 +9,8 @@ servers:
 paths:
   /programs:
     get:
+      tags:
+        - Programs
       summary: Obtener todos los programas académicos
       operationId: programs_get
       responses:
@@ -25,6 +27,8 @@ paths:
           description: Error interno del servidor
       x-openapi-router-controller: swagger_server.controllers.programs_controller
     post:
+      tags:
+        - Programs
       summary: Crear un nuevo programa académico
       operationId: programs_post
       requestBody:
@@ -45,6 +49,8 @@ paths:
       x-openapi-router-controller: swagger_server.controllers.programs_controller
   /programs/{id}:
     get:
+      tags:
+        - Programs
       summary: Obtener un programa académico por ID
       operationId: programs_id_get
       parameters:
@@ -68,6 +74,8 @@ paths:
           description: Programa académico no encontrado
       x-openapi-router-controller: swagger_server.controllers.programs_controller
     delete:
+      tags:
+        - Programs
       summary: Eliminar un programa académico
       operationId: programs_id_delete
       parameters:
@@ -85,6 +93,8 @@ paths:
           description: Programa académico no encontrado
       x-openapi-router-controller: swagger_server.controllers.programs_controller
     patch:
+      tags:
+        - Programs
       summary: Actualizar parcialmente un programa académico
       operationId: programs_id_patch
       parameters:
@@ -115,6 +125,8 @@ paths:
       x-openapi-router-controller: swagger_server.controllers.programs_controller
   /vendors/{vendorId}/programs:
     get:
+      tags:
+        - Programs
       summary: Obtener programas asignados a un vendedor
       operationId: vendors_programs_get
       parameters:
@@ -139,6 +151,8 @@ paths:
           description: Vendedor no encontrado o sin programas asignados
       x-openapi-router-controller: swagger_server.controllers.programs_controller
     post:
+      tags:
+        - Programs
       summary: Asignar un programa a un vendedor
       operationId: vendors_programs_post
       parameters:
@@ -165,6 +179,8 @@ paths:
       x-openapi-router-controller: swagger_server.controllers.programs_controller
   /vendors/{vendorId}/programs/{programId}:
     delete:
+      tags:
+        - Programs
       summary: Quitar un programa de un vendedor
       operationId: vendors_programs_delete
       parameters:
@@ -190,6 +206,8 @@ paths:
       x-openapi-router-controller: swagger_server.controllers.programs_controller
   /sales-advisors/{advisor_id}/programs:
     get:
+      tags:
+        - Programs
       summary: Obtener programas asignados a un asesor de ventas
       operationId: sales_advisors_programs_get
       parameters:
